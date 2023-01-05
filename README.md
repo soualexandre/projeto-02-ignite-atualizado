@@ -1,5 +1,5 @@
 # Pomodoros
 
 <p align="center">
-  <img alt="License" src="https://img.shields.io/static/v1?label=license&message=MIT&color=8257E5&labelColor=000000">
-<br>
+  <img alt="letmeask" src="https://github.com/soualexandre/projeto-02-ignite-atualizado/blob/main/phomodoros.png?raw=true" width="80%">
+</p>
