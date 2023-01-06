@@ -34,15 +34,13 @@ const newCycleFormValidationSchema = zod.object({
 type NewCycleFormdata = zod.infer<typeof newCycleFormValidationSchema>
 
 
+
+
 export const CyclesContext = createContext({} as CyclesContextType);
-
-
 export function Home() {
     const [cycles, setCycles] = useState<Cycle[]>([]);
     const [activeCycleId, setActiveCycleId] = useState<string | null>(null)
     const [amoutSecondsPassed, setAmoutSecondsPassed] = useState(0)
-
-    const activeCycle = cycles.find((cycle) => cycle.id === activeCycleId);
 
     const newCycleForm = useForm<NewCycleFormdata>({
         resolver: zodResolver(newCycleFormValidationSchema),
@@ -51,11 +49,14 @@ export function Home() {
             minutesAmout: 0
         }
     });
+    
+    const { handleSubmit, watch, reset } = newCycleForm
+
+    const activeCycle = cycles.find((cycle) => cycle.id === activeCycleId);
+
     function setSecondsPassed(seconds: number){
         setAmoutSecondsPassed(seconds)
     }
-
-    const { handleSubmit, watch, reset } = newCycleForm
 
     function MarkCurrentCycleAsFinished() {
         setCycles(
@@ -107,7 +108,7 @@ export function Home() {
     return (
         <HomeContainer>
             <form action="" onSubmit={handleSubmit(handleCreateNewCycle)}>
-                <CyclesContext.Provider value={{ activeCycle, activeCycleId,amoutSecondsPassed, MarkCurrentCycleAsFinished,setSecondsPassed  }}>
+                <CyclesContext.Provider value={{ activeCycle, activeCycleId,amoutSecondsPassed, MarkCurrentCycleAsFinished, setSecondsPassed  }}>
                     <FormProvider {...newCycleForm}>
                         <NewCycleForm />
                     </FormProvider>

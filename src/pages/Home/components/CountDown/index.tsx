@@ -1,15 +1,44 @@
-import { differenceInMilliseconds } from "date-fns";
+import { differenceInSeconds } from "date-fns";
 import { useContext, useEffect, useState } from "react";
 import { CyclesContext } from "../..";
 import { CountDownContainer, Separator } from "./styles";
 
 export function CountDown() {
-    const { activeCycle, activeCycleId, MarkCurrentCycleAsFinished, setSecondsPassed, amoutSecondsPassed } = useContext(CyclesContext);
+    const { 
+            activeCycle,
+            activeCycleId,
+            MarkCurrentCycleAsFinished, 
+            setSecondsPassed, 
+            amoutSecondsPassed 
+        } = useContext(CyclesContext);
 
     const totalSeconds = activeCycle ? activeCycle.minutesAmount * 60 : 0
 
+    useEffect(() => {
+        let interval: number;
+        if (activeCycle) {
+            interval = setInterval(() => {
+                const secondsDifference = differenceInSeconds(
+                    new Date(),
+                    activeCycle.startDate,
+                )
+                if (secondsDifference >= totalSeconds) {
+                    MarkCurrentCycleAsFinished()
+                    setSecondsPassed(totalSeconds)
+                    clearInterval(interval)
+                }
+                else {
+                    setSecondsPassed(secondsDifference)
+                }
+            }, 1000)
 
-    const currentSeconds = activeCycle ? totalSeconds - amoutSecondsPassed : 0
+            return () => {
+                clearInterval(interval)
+            }
+        }
+    }, [activeCycle, totalSeconds, activeCycleId, MarkCurrentCycleAsFinished, setSecondsPassed])
+
+    const currentSeconds = activeCycle ? totalSeconds - amoutSecondsPassed : 0;
 
     const minutesAmount = Math.floor(currentSeconds / 60)
     const secondsAmount = currentSeconds % 60
@@ -22,32 +51,6 @@ export function CountDown() {
             document.title = `Ignte Timer - ${minutes}:${seconds}`
         }
     }, [minutes, seconds, activeCycle])
-
-    useEffect(() => {
-        let interval: number;
-        if (activeCycle) {
-            const interval = setInterval(() => {
-                const secondsDifference = differenceInMilliseconds(
-                    new Date(),
-                    activeCycle.startDate,
-                )
-
-                if (secondsDifference > totalSeconds) {
-                    MarkCurrentCycleAsFinished()
-                    setSecondsPassed(totalSeconds)
-                    clearInterval(interval)
-                }
-                else {
-                    setSecondsPassed(secondsDifference)
-                }
-            }, 1000)
-
-
-            return () => {
-                clearInterval(interval)
-            }
-        }
-    }, [activeCycle, totalSeconds, activeCycleId, MarkCurrentCycleAsFinished, setSecondsPassed])
 
     return (
         <CountDownContainer>
